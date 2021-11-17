@@ -1,0 +1,30 @@
+cabal-version:      2.4
+name:               aoc2021
+version:            0.1.0.0
+
+synopsis: AOC 2021 Solutions
+
+-- description:
+
+license: MIT
+author:             Brian Magnuson
+maintainer:         bdmagnuson@gmail.com
+
+copyright: (C) 2021 Brian Magnuson
+-- category:
+-- extra-source-files: CHANGELOG.md
+
+library
+  exposed-modules:  Aoc2021
+
+  other-modules: Day01
+
+--  default-extensions: GHC2021
+
+  hs-source-dirs:   src
+
+  build-depends:       base >= 4.13
+
+  default-language:    GHC2021
+
+
