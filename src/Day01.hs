@@ -14,12 +14,8 @@ input = getInput "input/day01.txt" parser
 
 do_part1 input = sum increased
   where
-    increased = map f pairs
-      where f (Nothing, _) = 0
-            f (_, Nothing) = 0
-            f (a, b)       = if a < b then 1 else 0
-
-    pairs = let l = fmap pure input in zip (Nothing:l) (l ++ [Nothing])
+    increased = map f $ zip input (tail input)
+      where f (a, b) = if a < b then 1 else 0
 
 triple l@(a:b:c:xs) = (a + b + c):(triple (tail l))
 triple _ = []
