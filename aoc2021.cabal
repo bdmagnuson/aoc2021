@@ -23,7 +23,9 @@ library
 
   hs-source-dirs:   src
 
-  build-depends:       base >= 4.13
+  build-depends:         base >= 4.13
+                       , attoparsec
+                       , text
 
   default-language:    GHC2021
 
