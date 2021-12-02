@@ -8,7 +8,6 @@ import AocUtils
 
 import qualified Data.Attoparsec.Text as P
 import Control.Applicative
-import Control.Monad.State.Strict
 
 data Dir
   = Forward Int
@@ -29,23 +28,20 @@ parser = many ((pForward <|> pDown <|> pUp) <* P.endOfLine)
     pDown    =    Down <$> (P.string    "down " *> P.decimal)
     pUp      =      Up <$> (P.string      "up " *> P.decimal)
 
-move1 :: Dir -> State Loc ()
-move1 x = do
+move1 l x =
   case x of
-    Forward d -> modify (\x -> x { horz  = horz x  + d })
-    Down    d -> modify (\x -> x { depth = depth x + d })
-    Up      d -> modify (\x -> x { depth = depth x - d })
-  return ()
+    Forward d -> l { horz  = horz l  + d }
+    Down    d -> l { depth = depth l + d }
+    Up      d -> l { depth = depth l - d }
 
-move2 :: Dir -> State Loc ()
-move2 x = do
+move2 l x =
   case x of
-    Forward d -> modify (\x -> x { horz  = horz x + d,
-                                   depth = depth x + (aim x * d) })
-    Down    d -> modify (\x -> x { aim   = aim  x + d })
-    Up      d -> modify (\x -> x { aim   = aim x - d })
-  return ()
+    Forward d -> l { horz  = horz l + d,
+                     depth = depth l + (aim l * d) }
+    Down    d -> l { aim   = aim  l + d }
+    Up      d -> l { aim   = aim l - d }
 
-part1 = let Loc h z _ = execState (traverse move1 input) (Loc 0 0 0) in h * z
-part2 = let Loc h z _ = execState (traverse move2 input) (Loc 0 0 0) in h * z
+part1 = let Loc h z _ = foldl move1 (Loc 0 0 0) input in h * z
+part2 = let Loc h z _ = foldl move2 (Loc 0 0 0) input in h * z
+
 
