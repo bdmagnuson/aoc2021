@@ -1,7 +1,7 @@
 
 # Advent of Code 2021
 
-Solutions (eventually) for AOC 2021 in Haskell.
+Solutions for [AOC 2021](https://adventofcode.com/2021/) in Haskell.
 
 * All solutions are in src/DayN.hs for both part 1 and 2 of each puzzle.
 * Problem source is under input/dayN.txt

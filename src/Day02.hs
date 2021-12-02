@@ -21,13 +21,13 @@ data Loc = Loc
   , aim   :: Int
   } deriving (Show)
 
+input = getInput "input/day02.txt" parser
+
 parser = many ((pForward <|> pDown <|> pUp) <* P.endOfLine)
   where
-    pForward = P.string "forward " *> P.decimal >>= (\x -> return $ Forward x)
-    pDown    = P.string    "down " *> P.decimal >>= (\x -> return $ Down    x)
-    pUp      = P.string      "up " *> P.decimal >>= (\x -> return $ Up      x)
-
-input = getInput "input/day02.txt" parser
+    pForward = Forward <$> (P.string "forward " *> P.decimal)
+    pDown    =    Down <$> (P.string    "down " *> P.decimal)
+    pUp      =      Up <$> (P.string      "up " *> P.decimal)
 
 move1 :: Dir -> State Loc ()
 move1 x = do
@@ -40,7 +40,8 @@ move1 x = do
 move2 :: Dir -> State Loc ()
 move2 x = do
   case x of
-    Forward d -> modify (\x -> x { horz  = horz x + d, depth = depth x + (aim x * d) })
+    Forward d -> modify (\x -> x { horz  = horz x + d,
+                                   depth = depth x + (aim x * d) })
     Down    d -> modify (\x -> x { aim   = aim  x + d })
     Up      d -> modify (\x -> x { aim   = aim x - d })
   return ()
