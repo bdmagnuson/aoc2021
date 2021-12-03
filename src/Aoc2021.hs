@@ -1,6 +1,5 @@
 module Aoc2021 () where
 
-import Day01
-import Day02
-
-
+import qualified Day01
+import qualified Day02
+import qualified Day03
