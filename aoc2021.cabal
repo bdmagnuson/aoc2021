@@ -27,6 +27,8 @@ library
                        , attoparsec
                        , text
                        , mtl
+                       , containers
+                       , lens
 
   default-language:    GHC2021
 

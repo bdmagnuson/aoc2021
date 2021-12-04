@@ -24,7 +24,7 @@ boolListToInt x = boolToInt (map (\x -> if x == 1 then True else False) x)
 
 part1 = boolToInt gt * boolToInt (map not gt)
   where
-    ones = foldl (zipWith (+)) (take (length (head input)) (repeat 0)) input
+    ones = foldl1 (zipWith (+)) input
     zeros = map (length input -) ones
     gt = zipWith (>) ones zeros
 
