@@ -30,19 +30,20 @@ parser = many pLine
       return ((x1, y1), (x2, y2))
 
 diag :: (Point, Point) -> [Point]
-diag (p1@(x1, y1), p2@(x2, y2)) =
-  if p1 == p2 then [p1] else (p1 : (diag (nextPt, p2)))
+diag (p1@(x1, y1), (x2, y2)) = take (abs (x1 - x2) + 1) (iterate f p1)
   where
-    nextPt =
-      ( if x2 > x1 then x1 + 1 else x1 - 1,
-        if y2 > y1 then y1 + 1 else y1 - 1
-      )
+    f = bimap f1 f2
+    f1 = if x1 > x2 then pred else succ
+    f2 = if y1 > y2 then pred else succ
 
 hvLine :: (Point, Point) -> [Point]
-hvLine ((x1, y1), (x2, y2)) = [(x, y) | x <- [min x1 x2 .. max x1 x2], y <- [min y1 y2 .. max y1 y2]]
+hvLine ((x1, y1), (x2, y2))
+  | x1 == x2 = [(x1, y) | y <- [min y1 y2 .. max y1 y2]]
+  | y1 == y2 = [(x, y1) | x <- [min x1 x2 .. max x1 x2]]
+  | otherwise = error "bad"
 
 inc :: VentMap -> Point -> VentMap
-inc m p = m & at p . non 0 +~ 1
+inc m p = m & at p . non 0 %~ succ
 
 ventMap1 = foldl go M.empty input
   where
@@ -56,7 +57,7 @@ ventMap2 = foldl go M.empty input
       | (x1 == x2) || (y1 == y2) = foldl inc m (hvLine p)
       | otherwise = foldl inc m (diag p)
 
-gt2 x = (length . M.keys) (M.filter (\x -> x > 1) x)
+gt2 = M.size . M.filter (\x -> x > 1)
 
 part1 = gt2 ventMap1
 

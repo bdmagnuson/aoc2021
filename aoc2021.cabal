@@ -28,6 +28,7 @@ library
   default-extensions:    OverloadedStrings
                        , TemplateHaskell
                        , GADTs
+                       , TypeFamilies
 
   build-depends:         base >= 4.13
                        , attoparsec
