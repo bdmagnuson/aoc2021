@@ -1,5 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
-{-# LANGUAGE TypeFamilies #-}
 
 module Day04
   ( part1,
@@ -11,7 +9,6 @@ import AocUtils
 import Control.Applicative
 import Control.Lens
 import qualified Data.Attoparsec.Text as P
-import Data.Char (ord)
 import qualified Data.IntMap as M
 import Data.List
 

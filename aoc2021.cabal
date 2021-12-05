@@ -17,17 +17,24 @@ copyright: (C) 2021 Brian Magnuson
 library
   exposed-modules:  Aoc2021
 
-  other-modules: Day01
-
---  default-extensions: GHC2021
+  other-modules: Day01,
+                 Day02,
+                 Day03,
+                 Day04,
+                 AocUtils
 
   hs-source-dirs:   src
+
+  default-extensions:    OverloadedStrings
+                       , TemplateHaskell
+                       , GADTs
 
   build-depends:         base >= 4.13
                        , attoparsec
                        , text
                        , mtl
                        , containers
+                       , hashmap
                        , lens
 
   default-language:    GHC2021
