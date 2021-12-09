@@ -20,22 +20,21 @@ parser = V.fromList <$> many ((V.fromList . map (subtract 48 . ord)) <$> many P.
 
 height (x, y) = input ^? ix y . ix x
 
+neighbors (x, y) = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+
 lowPts = [(x, y) | y <- [0 .. h - 1], x <- [0 .. w - 1], isLow (x, y)]
   where
     h = V.length input
     w = V.length (input V.! 0)
-    isLow (x, y) = all (pt <) neighbors
-      where
-        pt = input ^?! ix y . ix x
-        neighbors = (catMaybes . map height) [(x, y + 1), (x, y - 1), (x + 1, y), (x - 1, y)]
+    isLow p = all (\x' -> pure x' > height p) (catMaybes . map height . neighbors $ p)
 
-basin (x, y) =
-  case height (x, y) of
+basin p =
+  case height p of
     Nothing -> S.empty
     Just 9 -> S.empty
-    Just h -> foldr S.union (S.singleton (x, y)) (map basin higherPts)
+    Just h -> foldr S.union (S.singleton p) (map basin higherPts)
       where
-        higherPts = filter (\x -> height x > Just h) [(x, y + 1), (x, y - 1), (x + 1, y), (x - 1, y)]
+        higherPts = filter (\x -> height x > Just h) (neighbors p)
 
 part1 = sum . map (+ 1) . catMaybes . map height $ lowPts
 
