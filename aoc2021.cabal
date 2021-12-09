@@ -25,6 +25,7 @@ library
                  Day06,
                  Day07,
                  Day08,
+                 Day09,
                  AocUtils
 
   hs-source-dirs:   src
@@ -35,6 +36,7 @@ library
                        , TemplateHaskell
                        , GADTs
                        , TypeFamilies
+                       , ImportQualifiedPost
 
   build-depends:         base >= 4.13
                        , attoparsec
@@ -43,6 +45,7 @@ library
                        , containers
                        , hashmap
                        , lens
+                       , vector
 
   default-language:    GHC2021
 

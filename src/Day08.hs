@@ -7,13 +7,13 @@ where
 import AocUtils
 import Control.Applicative
 import Control.Lens
-import qualified Data.Attoparsec.Text as P
+import Data.Attoparsec.Text qualified as P
 import Data.Char
 import Data.List (find, permutations, sort)
-import qualified Data.Map as M
+import Data.Map qualified as M
 import Data.Maybe (fromJust)
 import Data.Text (Text)
-import qualified Data.Text as T
+import Data.Text qualified as T
 
 data Display = Display
   { _patterns :: [Text],

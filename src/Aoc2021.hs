@@ -3,11 +3,12 @@ module Aoc2021
   )
 where
 
-import qualified Day01
-import qualified Day02
-import qualified Day03
-import qualified Day04
-import qualified Day05
-import qualified Day06
-import qualified Day07
-import qualified Day08
+import Day01 qualified
+import Day02 qualified
+import Day03 qualified
+import Day04 qualified
+import Day05 qualified
+import Day06 qualified
+import Day07 qualified
+import Day08 qualified
+import Day09 qualified
