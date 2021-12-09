@@ -1,10 +1,10 @@
-module Day05
+module Aoc2021.Day05
   ( part1,
     part2,
   )
 where
 
-import AocUtils
+import Aoc2021.AocUtils
 import Control.Applicative
 import Control.Lens
 import qualified Data.Attoparsec.Text as P

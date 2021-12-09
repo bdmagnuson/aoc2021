@@ -1,9 +1,10 @@
-module AocUtils
- ( getInput
- ) where
+module Aoc2021.AocUtils
+  ( getInput,
+  )
+where
 
-import qualified Data.Attoparsec.Text as P
-import qualified Data.Text.IO as T
+import Data.Attoparsec.Text qualified as P
+import Data.Text.IO qualified as T
 import System.IO.Unsafe
 
 getInput :: String -> P.Parser a -> a

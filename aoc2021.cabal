@@ -15,18 +15,33 @@ copyright: (C) 2021 Brian Magnuson
 -- extra-source-files: CHANGELOG.md
 
 library
-  exposed-modules:  Aoc2021
+  exposed-modules: Aoc2021.Day01,
+                   Aoc2021.Day02,
+                   Aoc2021.Day03,
+                   Aoc2021.Day04,
+                   Aoc2021.Day05,
+                   Aoc2021.Day06,
+                   Aoc2021.Day07,
+                   Aoc2021.Day08,
+                   Aoc2021.Day09,
+                   Aoc2021.Day10,
+                   Aoc2021.Day11,
+                   Aoc2021.Day12,
+                   Aoc2021.Day13,
+                   Aoc2021.Day14,
+                   Aoc2021.Day15,
+                   Aoc2021.Day16,
+                   Aoc2021.Day17,
+                   Aoc2021.Day18,
+                   Aoc2021.Day19,
+                   Aoc2021.Day20,
+                   Aoc2021.Day21,
+                   Aoc2021.Day22,
+                   Aoc2021.Day23,
+                   Aoc2021.Day24,
+                   Aoc2021.Day25
 
-  other-modules: Day01,
-                 Day02,
-                 Day03,
-                 Day04,
-                 Day05,
-                 Day06,
-                 Day07,
-                 Day08,
-                 Day09,
-                 AocUtils
+  other-modules: Aoc2021.AocUtils
 
   hs-source-dirs:   src
 
@@ -50,14 +65,10 @@ library
   default-language:    GHC2021
 
 executable Aoc2021
-    default-language: Haskell2010
-    hs-source-dirs: app
-    main-is: Main.hs
-    build-depends:         base >= 4.13
-                         , attoparsec
-                         , text
-                         , mtl
-                         , containers
-                         , hashmap
-                         , lens
-                         , aoc2021
+  default-language: Haskell2010
+  hs-source-dirs: app
+  main-is: Main.hs
+  build-depends:         base >= 4.13
+                       , aoc2021
+
+  default-extensions:  ImportQualifiedPost
