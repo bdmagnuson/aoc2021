@@ -1,4 +1,7 @@
-module Aoc2021 () where
+module Aoc2021
+  ( Day08.part2,
+  )
+where
 
 import qualified Day01
 import qualified Day02

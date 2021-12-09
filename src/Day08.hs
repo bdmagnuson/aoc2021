@@ -1,5 +1,3 @@
-{-# LANGUAGE TemplateHaskell #-}
-
 module Day08
   ( part1,
     part2,
@@ -35,7 +33,7 @@ parser = many (pLine <* P.endOfLine)
       display <- P.takeWhile1 isAlpha `P.sepBy` P.char ' '
       return (Display patterns display)
 
-part1' = lengthOf (folded . display . folded . filtered (\x -> let l = T.length x in or [l == 2, l == 4, l == 3, l == 07])) input
+part1 = lengthOf (folded . display . folded . filtered (\x -> T.length x `elem` [2, 3, 4, 7])) input
 
 validNumbers =
   M.fromList
@@ -64,7 +62,6 @@ decode :: Display -> Int
 decode (Display p d) = toNum (map (translate (findPermutation p)) d)
   where
     toNum = foldl step 0
-      where
-        step a c = a * 10 + (validNumbers ^?! ix c)
+    step a c = a * 10 + (validNumbers ^?! ix c)
 
 part2 = sum (map decode input)

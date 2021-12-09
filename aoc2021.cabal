@@ -29,6 +29,8 @@ library
 
   hs-source-dirs:   src
 
+  ghc-options: -O2
+
   default-extensions:    OverloadedStrings
                        , TemplateHaskell
                        , GADTs
@@ -44,4 +46,15 @@ library
 
   default-language:    GHC2021
 
-
+executable Aoc2021
+    default-language: Haskell2010
+    hs-source-dirs: app
+    main-is: Main.hs
+    build-depends:         base >= 4.13
+                         , attoparsec
+                         , text
+                         , mtl
+                         , containers
+                         , hashmap
+                         , lens
+                         , aoc2021
