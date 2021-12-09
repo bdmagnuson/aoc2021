@@ -10,7 +10,7 @@ import Control.Lens
 import Data.Attoparsec.Text qualified as P
 import Data.Char
 import Data.List (sort)
-import Data.Maybe (catMaybes)
+import Data.Maybe (mapMaybe)
 import Data.Set qualified as S hiding (foldr)
 import Data.Vector qualified as V
 
@@ -26,7 +26,7 @@ lowPts = [(x, y) | y <- [0 .. h - 1], x <- [0 .. w - 1], isLow (x, y)]
   where
     h = V.length input
     w = V.length (input V.! 0)
-    isLow p = all (\x' -> pure x' > height p) (catMaybes . map height . neighbors $ p)
+    isLow p = all (\x -> pure x > height p) (mapMaybe height . neighbors $ p)
 
 basin p =
   case height p of
@@ -36,6 +36,6 @@ basin p =
       where
         higherPts = filter (\x -> height x > Just h) (neighbors p)
 
-part1 = sum . map (+ 1) . catMaybes . map height $ lowPts
+part1 = sum . map (+ 1) . mapMaybe height $ lowPts
 
 part2 = product . take 3 . reverse . sort . map (S.size . basin) $ lowPts
