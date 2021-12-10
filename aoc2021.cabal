@@ -52,6 +52,7 @@ library
                        , GADTs
                        , TypeFamilies
                        , ImportQualifiedPost
+                       , LambdaCase
 
   build-depends:         base >= 4.13
                        , attoparsec
