@@ -12,12 +12,11 @@ import Data.Char
 import Data.List (find, nub, permutations, sort, (\\))
 import Data.Map qualified as M
 import Data.Maybe (fromJust)
-import Data.Text (Text)
 import Data.Text qualified as T
 
 data Display = Display
-  { _patterns :: [Text],
-    _display :: [Text]
+  { _patterns :: [String],
+    _display :: [String]
   }
   deriving (Show)
 
@@ -28,14 +27,14 @@ input = getInput "input/day08.txt" parser
 parser = many (pLine <* P.endOfLine)
   where
     pLine = do
-      patterns <- P.takeWhile1 isAlpha `P.sepBy` P.char ' '
+      patterns <- (T.unpack <$> (P.takeWhile1 isAlpha)) `P.sepBy` P.char ' '
       P.string " | "
-      display <- P.takeWhile1 isAlpha `P.sepBy` P.char ' '
+      display <- (T.unpack <$> (P.takeWhile1 isAlpha)) `P.sepBy` P.char ' '
       return (Display patterns display)
 
-part1 = lengthOf (folded . display . folded . filtered (\x -> T.length x `elem` [2, 3, 4, 7])) input
+part1 = lengthOf (folded . display . folded . filtered (\x -> length x `elem` [2, 3, 4, 7])) input
 
-getLength d l = d ^.. folded . filtered (\x -> T.length x == l)
+getLength d l = d ^.. folded . filtered (\x -> length x == l)
 
 validNumbers =
   M.fromList
@@ -51,13 +50,13 @@ validNumbers =
       ("abcdfg", 9)
     ]
 
-translate :: M.Map Char Char -> Text -> Text
-translate m = T.pack . sort . T.unpack . T.map (\x -> m ^?! ix x)
+translate :: M.Map Char Char -> String -> String
+translate m = sort . map (\x -> m ^?! ix x)
 
-findPermutation :: [Text] -> M.Map Char Char
-findPermutation l = fromJust $ find (isValid l) (map (\x -> M.fromList $ T.zip x "abcdefg") perms)
+findPermutation :: [String] -> M.Map Char Char
+findPermutation l = fromJust $ find (isValid l) (map (\x -> M.fromList $ zip x "abcdefg") perms)
   where
-    perms = map T.pack $ (concatMap f . permutations . nub . T.unpack) (T.concat $ concatMap (getLength l) [2, 3, 4])
+    perms = concatMap f . permutations . nub . concat $ concatMap (getLength l) [2, 3, 4]
       where
         f x = [take 4 x ++ [b !! 0, last x, b !! 1] | b <- permutations ("abcdefg" \\ x)]
     isValid l p = all (\x -> translate p x `M.member` validNumbers) l
