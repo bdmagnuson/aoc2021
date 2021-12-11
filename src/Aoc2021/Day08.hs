@@ -9,7 +9,7 @@ import Control.Applicative
 import Control.Lens
 import Data.Attoparsec.Text qualified as P
 import Data.Char
-import Data.List (find, permutations, sort)
+import Data.List (find, nub, permutations, sort, (\\))
 import Data.Map qualified as M
 import Data.Maybe (fromJust)
 import Data.Text (Text)
@@ -35,6 +35,8 @@ parser = many (pLine <* P.endOfLine)
 
 part1 = lengthOf (folded . display . folded . filtered (\x -> T.length x `elem` [2, 3, 4, 7])) input
 
+getLength d l = d ^.. folded . filtered (\x -> T.length x == l)
+
 validNumbers =
   M.fromList
     [ ("abcefg", 0),
@@ -53,9 +55,11 @@ translate :: M.Map Char Char -> Text -> Text
 translate m = T.pack . sort . T.unpack . T.map (\x -> m ^?! ix x)
 
 findPermutation :: [Text] -> M.Map Char Char
-findPermutation l = fromJust $ find (isValid l) (map (\x -> M.fromList $ T.zip "abcdefg" x) perms)
+findPermutation l = fromJust $ find (isValid l) (map (\x -> M.fromList $ T.zip x "abcdefg") perms)
   where
-    perms = map T.pack (permutations (T.unpack "abcdefg"))
+    perms = map T.pack $ (concatMap f . permutations . nub . T.unpack) (T.concat $ concatMap (getLength l) [2, 3, 4])
+      where
+        f x = [take 4 x ++ [b !! 0, last x, b !! 1] | b <- permutations ("abcdefg" \\ x)]
     isValid l p = all (\x -> translate p x `M.member` validNumbers) l
 
 decode :: Display -> Int

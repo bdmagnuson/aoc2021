@@ -50,7 +50,7 @@ scores = map (go []) input
             '>' -> if s' == '<' then go ss xs else Invalid 25137
             '}' -> if s' == '{' then go ss xs else Invalid 1197
 
-getScores :: Prism' Status Int -> [Status] -> [Int]
+getScores :: Prism' a b -> [a] -> [b]
 getScores s l = l ^.. folded . filtered (has s) . s
 
 part1 = (sum . getScores _Invalid) scores

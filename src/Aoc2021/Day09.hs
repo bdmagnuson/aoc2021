@@ -9,7 +9,6 @@ import Control.Applicative
 import Control.Lens
 import Data.Attoparsec.Text qualified as P
 import Data.Char
-import Data.List (sort)
 import Data.Maybe (mapMaybe)
 import Data.Set qualified as S hiding (foldr)
 import Data.Vector qualified as V
@@ -38,4 +37,4 @@ basin p =
 
 part1 = sum . map (+ 1) . mapMaybe height $ lowPts
 
-part2 = product . take 3 . reverse . sort . map (S.size . basin) $ lowPts
+part2 = product . take 3 . revsort . map (S.size . basin) $ lowPts
