@@ -1,12 +1,13 @@
 module Aoc2021.Day01
   ( part1,
     part2,
+    bench,
   )
 where
 
 import Aoc2021.AocUtils
 import Control.Applicative
-import qualified Data.Attoparsec.Text as P
+import Data.Attoparsec.Text qualified as P
 
 parser = many (P.decimal <* P.endOfLine)
 
@@ -21,6 +22,11 @@ do_part1 input = sum increased
 triple l@(a : b : c : xs) = (a + b + c) : (triple (tail l))
 triple _ = []
 
-part1 = do_part1 input
+part1 x = do_part1 x
 
-part2 = do_part1 (triple input)
+part2 x = do_part1 (triple x)
+
+bench = do
+  input <- getInput' "input/day01.txt" parser
+  let (!x, !y) = (part1 input, part2 input)
+  return ()

@@ -25,13 +25,21 @@ import Aoc2021.Day22 qualified as Day22
 import Aoc2021.Day23 qualified as Day23
 import Aoc2021.Day24 qualified as Day24
 import Aoc2021.Day25 qualified as Day25
+import Criterion.Main
+
+--  defaultMain
+--    [ bgroup
+--        "aoc2021"
+--        [ bench "part1" $ nfIO (Day01.bench >> Day02.bench >> Day08.bench)
+--        ]
+--    ]
 
 main = do
-  putStrLn $ "Day01 part 1: " ++ (show Day01.part1)
-  putStrLn $ "Day01 part 1: " ++ (show Day01.part2)
+  -- putStrLn $ "Day01 part 1: " ++ (show Day01.part1)
+  -- putStrLn $ "Day01 part 1: " ++ (show Day01.part2)
 
-  putStrLn $ "Day02 part 1: " ++ (show Day02.part1)
-  putStrLn $ "Day02 part 1: " ++ (show Day02.part2)
+  -- putStrLn $ "Day02 part 1: " ++ (show Day02.part1)
+  -- putStrLn $ "Day02 part 1: " ++ (show Day02.part2)
 
   putStrLn $ "Day03 part 1: " ++ (show Day03.part1)
   putStrLn $ "Day03 part 1: " ++ (show Day03.part2)
@@ -48,8 +56,8 @@ main = do
   putStrLn $ "Day07 part 1: " ++ (show Day07.part1)
   putStrLn $ "Day07 part 2: " ++ (show Day07.part2)
 
-  putStrLn $ "Day08 part 1: " ++ (show Day08.part1)
-  putStrLn $ "Day08 part 2: " ++ (show Day08.part2)
+  -- putStrLn $ "Day08 part 1: " ++ (show Day08.part1)
+  -- putStrLn $ "Day08 part 2: " ++ (show Day08.part2)
 
   putStrLn $ "Day09 part 1: " ++ (show Day09.part1)
   putStrLn $ "Day09 part 2: " ++ (show Day09.part2)

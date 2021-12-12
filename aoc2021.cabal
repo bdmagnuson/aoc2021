@@ -62,6 +62,7 @@ library
                        , hashmap
                        , lens
                        , vector
+                       , algebraic-graphs
 
   default-language:    GHC2021
 
@@ -71,5 +72,7 @@ executable Aoc2021
   main-is: Main.hs
   build-depends:         base >= 4.13
                        , aoc2021
+                       , criterion
 
   default-extensions:  ImportQualifiedPost
+  ghc-options: -O2

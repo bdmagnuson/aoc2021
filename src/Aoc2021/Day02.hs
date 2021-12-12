@@ -1,12 +1,13 @@
 module Aoc2021.Day02
   ( part1,
     part2,
+    bench,
   )
 where
 
 import Aoc2021.AocUtils
 import Control.Applicative
-import qualified Data.Attoparsec.Text as P
+import Data.Attoparsec.Text qualified as P
 
 data Dir
   = Forward Int
@@ -45,6 +46,10 @@ move2 l x =
     Down d -> l {aim = aim l + d}
     Up d -> l {aim = aim l - d}
 
-part1 = let Loc h z _ = foldl move1 (Loc 0 0 0) input in h * z
+part1 x = let Loc h z _ = foldl move1 (Loc 0 0 0) x in h * z
 
-part2 = let Loc h z _ = foldl move2 (Loc 0 0 0) input in h * z
+part2 x = let Loc h z _ = foldl move2 (Loc 0 0 0) x in h * z
+
+bench = do
+  input <- getInput' "input/day02.txt" parser
+  return $ seq (part1 input, part2 input) ()

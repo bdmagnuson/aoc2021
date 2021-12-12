@@ -1,6 +1,7 @@
 module Aoc2021.Day08
   ( part1,
     part2,
+    bench,
   )
 where
 
@@ -31,8 +32,6 @@ parser = many (pLine <* P.endOfLine)
       P.string " | "
       display <- (T.unpack <$> (P.takeWhile1 isAlpha)) `P.sepBy` P.char ' '
       return (Display patterns display)
-
-part1 = lengthOf (folded . display . folded . filtered (\x -> length x `elem` [2, 3, 4, 7])) input
 
 getLength d l = d ^.. folded . filtered (\x -> length x == l)
 
@@ -67,4 +66,11 @@ decode (Display p d) = toNum (map (translate (findPermutation p)) d)
     toNum = foldl step 0
     step a c = a * 10 + (validNumbers ^?! ix c)
 
-part2 = sum (map decode input)
+part1 = lengthOf (folded . display . folded . filtered (\x -> length x `elem` [2, 3, 4, 7]))
+
+part2 x = sum (map decode x)
+
+bench = do
+  input <- getInput' "input/day08.txt" parser
+  let (x, y) = (part1 input, part2 input)
+  return ()
