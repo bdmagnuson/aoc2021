@@ -51,14 +51,6 @@ paths g n =
       Small _ -> removeVertex n g
       otherwise -> g
 
-isLinear :: Graph Cave -> Cave -> Bool
-isLinear g End = True
-isLinear g n =
-  case exits g n of
-    Nothing -> False
-    Just (e : []) -> isLinear (removeVertex n g) e
-    Just _ -> False
-
 paths2 :: Graph Cave -> Bool -> Cave -> [[Cave]]
 paths2 _ _ End = [[End]]
 paths2 g True n =
@@ -72,7 +64,7 @@ paths2 g True n =
     notEnd End = False
     notEnd _ = True
 
-start = edges (input ++ (map (\(x, y) -> (y, x)) input))
+start = let a = edges input in overlay a (transpose a)
 
 part1 = length $ paths start Start
 
