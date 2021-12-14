@@ -6,7 +6,7 @@ where
 
 import Aoc2021.AocUtils
 import Control.Applicative
-import qualified Data.Attoparsec.Text as P
+import Data.Attoparsec.Text qualified as P
 import Data.Char (ord)
 
 input = getInput "input/day03.txt" parser

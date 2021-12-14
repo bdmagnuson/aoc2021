@@ -28,7 +28,7 @@ input = getInput "input/day11.txt" parser
 
 parser = V.fromList <$> many ((V.fromList . map ((Spot False) . subtract 48 . ord)) <$> many P.digit <* P.endOfLine)
 
-neighbors p = let l = [(+ 1), id, (subtract 1)] in [bimap a b p | a <- l, b <- l]
+neighbors p = let l = [id, (+ 1), (subtract 1)] in tail [bimap a b p | a <- l, b <- l]
 
 allPts x = fmap fst $ x ^@.. itraversed <.> itraversed
 

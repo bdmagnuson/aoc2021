@@ -13,11 +13,10 @@ parser = many (P.decimal <* P.endOfLine)
 
 input = getInput "input/day01.txt" parser
 
-do_part1 input = sum increased
-  where
-    increased = map f $ zip input (tail input)
-      where
-        f (a, b) = if a < b then 1 else 0
+toInt True = 1
+toInt False = 0
+
+do_part1 input = (sum . map toInt) (zipWith (<) input (tail input))
 
 triple l@(a : b : c : xs) = (a + b + c) : (triple (tail l))
 triple _ = []

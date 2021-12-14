@@ -63,6 +63,7 @@ library
                        , lens
                        , vector
                        , algebraic-graphs
+                       , memoize
 
   default-language:    GHC2021
 

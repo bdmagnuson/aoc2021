@@ -72,7 +72,7 @@ main = do
   putStrLn $ "Day12 part 1: " ++ (show Day12.part2)
 
   putStrLn $ "Day13 part 1: " ++ (show Day13.part1)
-  putStrLn $ "Day13 part 1: " ++ (show Day13.part2)
+  putStrLn $ "Day13 part 2:\n" ++ (show Day13.part2)
 
   putStrLn $ "Day14 part 1: " ++ (show Day14.part1)
   putStrLn $ "Day14 part 2: " ++ (show Day14.part2)
