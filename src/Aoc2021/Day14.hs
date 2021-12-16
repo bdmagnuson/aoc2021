@@ -14,8 +14,6 @@ import Data.List (group, sort)
 import Data.Map qualified as M
 import Data.Text qualified as T
 
-(start, rules) = getInput "input/day14.txt" parser
-
 parser = do
   start <- pString <* P.endOfLine
   P.endOfLine
@@ -29,18 +27,29 @@ parser = do
       right <- P.anyChar
       return (left, right)
 
+(start, rules) = getInput "input/day14.txt" parser
+
 emptyCounts = M.fromList $ zip (M.elems rules) (repeat 0)
+
+addCounts = M.unionWith (+)
+
+subCounts = M.unionWith (-)
 
 counts :: Integer -> (Char, Char) -> M.Map Char Integer
 counts = memoize2 f
   where
     f 0 (x, y) = emptyCounts & ix x +~ 1 & ix y +~ 1
-    f n (x, y) = let c = rules ^?! ix (x, y) in M.unionWith (+) (counts (n - 1) (x, c)) (counts (n - 1) (c, y)) & ix c -~ 1
+    f n (x, y) =
+      let c = rules ^?! ix (x, y)
+       in addCounts
+            (counts (n - 1) (x, c))
+            (counts (n - 1) (c, y))
+            & ix c -~ 1
 
 score x n =
-  let correction = T.foldl (\m k -> m & ix k +~ 1) emptyCounts (T.init (T.tail x))
-      res = foldl (M.unionWith (+)) emptyCounts ((map (counts n)) (T.zip x (T.tail x)))
-      res' = M.unionWith (-) res correction
+  let correction = T.foldl' (\m k -> m & ix k +~ 1) emptyCounts (T.init (T.tail x))
+      res = foldr addCounts emptyCounts ((map (counts n)) (T.zip x (T.tail x)))
+      res' = subCounts res correction
    in maximum res' - minimum res'
 
 part1 = score start 10

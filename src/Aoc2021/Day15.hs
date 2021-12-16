@@ -4,13 +4,91 @@ module Aoc2021.Day15
   )
 where
 
+import Algebra.Graph.AdjacencyIntMap
 import Aoc2021.AocUtils
-import Control.Applicative
+import Control.Applicative hiding (empty)
 import Control.Lens
 import Data.Attoparsec.Text qualified as P
+import Data.Char (ord)
+import Data.IntMap qualified as M
+import Data.IntSet qualified as S
+import Data.List (foldl')
+import Data.Maybe (mapMaybe)
+import Data.Ord (comparing)
+import Debug.Trace
 
--- input = getInput "input/day09.txt" parser
+parser = many (many ((subtract 48 . ord) <$> P.digit) <* P.endOfLine)
 
-part1 = 0
+input = getInput "input/day15_test.txt" parser
 
-part2 = 0
+input' = getInput "input/day15.txt" parser
+
+type Node = Int
+
+type Table = M.IntMap Int
+
+expandGraph x =
+  concat
+    [ foo [fs !! 0, fs !! 1, fs !! 2, fs !! 3, fs !! 4],
+      foo [fs !! 1, fs !! 2, fs !! 3, fs !! 4, fs !! 5],
+      foo [fs !! 2, fs !! 3, fs !! 4, fs !! 5, fs !! 6],
+      foo [fs !! 3, fs !! 4, fs !! 5, fs !! 6, fs !! 7],
+      foo [fs !! 4, fs !! 5, fs !! 6, fs !! 7, fs !! 8]
+    ]
+  where
+    foo xs = foldl1 (zipWith (++)) xs
+    fs = map ($ x) (map f [0 .. 8])
+    f n = (fmap . fmap) (inc n)
+    inc n = \x -> let a = x + n in if a >= 10 then a - 9 else a
+
+mkGraph :: Int -> Int -> AdjacencyIntMap
+mkGraph h w = overlay g (transpose g)
+  where
+    g = edges $ concatMap f [(x, y) | x <- [0 .. w - 1], y <- [0 .. h - 1]]
+    f (x, y)
+      | (x == w - 1 && y == h - 1) = []
+      | (x == w - 1) = [(label, down)]
+      | (y == h - 1) = [(label, right)]
+      | otherwise = [(label, down), (label, right)]
+      where
+        label = y * w + x
+        down = label + w
+        right = label + 1
+
+g x = mkGraph (length x) (length (x !! 0))
+
+c x = M.fromList $ zip [0 ..] (concat x)
+
+minGraph :: AdjacencyIntMap -> Table -> Int -> AdjacencyIntMap
+minGraph g c s = foldl' overlay empty (go (S.singleton s) (M.singleton s 0))
+  where
+    go :: S.IntSet -> Table -> [AdjacencyIntMap]
+    go v m = if S.size v == vertexCount g then [empty] else (edge src dst) : (go v' m')
+      where
+        (src, (dst, cost)) =
+          case minimumByOf folded (comparing (snd . snd)) $ concatMap f (S.toList v) of
+            Just a -> a
+            Nothing -> error (show m)
+          where
+            f :: Int -> [(Int, (Int, Int))]
+            f i = zip (repeat i) (mapMaybe (enterCost i) (adj ^?! ix i))
+            enterCost i x =
+              if x `S.member` v then Nothing else Just (x, m ^?! ix i + c ^?! ix x)
+        m' = m & at dst .~ Just cost
+        v' = S.insert dst v
+    nodes = S.fromList (map fst (adjacencyList g))
+    adj = M.fromList (adjacencyList g)
+
+trace' x = trace (show (x)) x
+
+minCost :: AdjacencyIntMap -> Table -> Int -> Int -> Int
+minCost g c s e = go e
+  where
+    m = (M.fromList . adjacencyList . transpose) (minGraph g c s)
+    go x = if x == s then 0 else (c ^?! ix x + go (m ^?! ix x . ix 0))
+
+solve1 x = minCost (g x) (c x) 0 (length (concat x) - 1)
+
+part1 = solve1 input'
+
+part2 = solve1 (expandGraph input')

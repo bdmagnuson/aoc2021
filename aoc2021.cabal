@@ -64,6 +64,7 @@ library
                        , vector
                        , algebraic-graphs
                        , memoize
+                       , transformers
 
   default-language:    GHC2021
 
