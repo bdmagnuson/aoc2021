@@ -10,6 +10,7 @@ import Control.Applicative hiding (empty)
 import Control.Lens
 import Data.Attoparsec.Text qualified as P
 import Data.Char (ord)
+import Data.Heap qualified as H
 import Data.IntMap qualified as M
 import Data.IntSet qualified as S
 import Data.List (foldl')
@@ -26,6 +27,8 @@ input' = getInput "input/day15.txt" parser
 type Node = Int
 
 type Table = M.IntMap Int
+
+type Next = H.MinPrioHeap Int (Int, Int)
 
 expandGraph x =
   concat
@@ -60,24 +63,23 @@ g x = mkGraph (length x) (length (x !! 0))
 c x = M.fromList $ zip [0 ..] (concat x)
 
 minGraph :: AdjacencyIntMap -> Table -> Int -> AdjacencyIntMap
-minGraph g c s = foldl' overlay empty (go (S.singleton s) (M.singleton s 0))
+minGraph g c s = foldl' overlay empty (go (newNodes 0 s) (M.singleton s 0))
   where
-    go :: S.IntSet -> Table -> [AdjacencyIntMap]
-    go v m = if S.size v == vertexCount g then [empty] else (edge src dst) : (go v' m')
+    go :: Next -> Table -> [AdjacencyIntMap]
+    go h m
+      | H.size h == 0 = [empty]
+      | Just (_, (_, dst)) <- H.viewHead h,
+        dst `M.member` m =
+          go (H.drop 1 h) m
+      | otherwise = (edge src dst) : (go h' m')
       where
-        (src, (dst, cost)) =
-          case minimumByOf folded (comparing (snd . snd)) $ concatMap f (S.toList v) of
-            Just a -> a
-            Nothing -> error (show m)
-          where
-            f :: Int -> [(Int, (Int, Int))]
-            f i = zip (repeat i) (mapMaybe (enterCost i) (adj ^?! ix i))
-            enterCost i x =
-              if x `S.member` v then Nothing else Just (x, m ^?! ix i + c ^?! ix x)
+        Just (cost, (src, dst)) = H.viewHead h
         m' = m & at dst .~ Just cost
-        v' = S.insert dst v
-    nodes = S.fromList (map fst (adjacencyList g))
+        h' = (H.drop 1 h) `H.union` (newNodes cost dst)
     adj = M.fromList (adjacencyList g)
+    newNodes cost dst = H.fromList (map f (adj ^?! ix dst))
+      where
+        f n = (cost + c ^?! ix n, (dst, n))
 
 trace' x = trace (show (x)) x
 

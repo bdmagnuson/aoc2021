@@ -17,6 +17,25 @@ import Data.Data
 import Data.List (foldl')
 import Data.Text qualified as T
 
+type Stream = [Integer]
+
+data Packet = Packet
+  { _pkt_version :: Integer,
+    _pkt_type :: Integer,
+    _payload :: Payload
+  }
+  deriving (Show, Data)
+
+data Payload
+  = Literal Integer
+  | Operator [Packet]
+  deriving (Show, Data)
+
+$(makeLenses ''Packet)
+$(makePrisms ''Payload)
+
+deriving instance Plated Packet
+
 input = getInput "input/day16.txt" (P.takeWhile1 isAlphaNum <* P.endOfLine)
 
 toL = concatMap f . T.unpack
@@ -37,25 +56,6 @@ toL = concatMap f . T.unpack
     f 'D' = [1, 1, 0, 1]
     f 'E' = [1, 1, 1, 0]
     f 'F' = [1, 1, 1, 1]
-
-type Stream = [Integer]
-
-data Packet = Packet
-  { _pkt_version :: Integer,
-    _pkt_type :: Integer,
-    _payload :: Payload
-  }
-  deriving (Show, Data)
-
-data Payload
-  = Literal Integer
-  | Operator [Packet]
-  deriving (Show, Data)
-
-$(makeLenses ''Packet)
-$(makePrisms ''Payload)
-
-deriving instance Plated Packet
 
 pPacket :: State Stream Packet
 pPacket = do
