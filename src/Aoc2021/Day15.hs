@@ -81,7 +81,29 @@ minGraph g c s = foldl' overlay empty (go (newNodes 0 s) (M.singleton s 0))
       where
         f n = (cost + c ^?! ix n, (dst, n))
 
-trace' x = trace (show (x)) x
+-- Direct version which exits with the cost right away vs building the whole min graph
+-- Not actually a lot faster since apparently we walk most of the graphs anyway
+minGraph' :: AdjacencyIntMap -> Table -> Int -> Int -> Int
+minGraph' g c s e = go (newNodes 0 s) (M.singleton s 0)
+  where
+    go :: Next -> Table -> Int
+    go h m
+      | H.size h == 0 = error "f'd up"
+      | Just (cost, (_, dst)) <- H.viewHead h,
+        dst == e =
+          cost
+      | Just (_, (_, dst)) <- H.viewHead h,
+        dst `M.member` m =
+          go (H.drop 1 h) m
+      | otherwise = go h' m'
+      where
+        Just (cost, (src, dst)) = H.viewHead h
+        m' = m & at dst .~ Just cost
+        h' = (H.drop 1 h) `H.union` (newNodes cost dst)
+    adj = M.fromList (adjacencyList g)
+    newNodes cost dst = H.fromList (map f (adj ^?! ix dst))
+      where
+        f n = (cost + c ^?! ix n, (dst, n))
 
 minCost :: AdjacencyIntMap -> Table -> Int -> Int -> Int
 minCost g c s e = go e

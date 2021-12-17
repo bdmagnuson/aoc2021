@@ -135,6 +135,6 @@ eval p =
     first = eval (p ^?! payload . _Operator . ix 0)
     second = eval (p ^?! payload . _Operator . ix 1)
 
-part1 x = let a = evalState pPacket (toL x) in sum $ universe a ^.. traverse . pkt_version
+part1 = let a = evalState pPacket (toL input) in sum $ universe a ^.. traverse . pkt_version
 
-part2 x = eval (evalState pPacket (toL x))
+part2 = eval (evalState pPacket (toL input))
