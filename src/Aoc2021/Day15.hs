@@ -6,6 +6,7 @@ where
 
 import Algebra.Graph.AdjacencyIntMap
 import Aoc2021.AocUtils
+import Codec.Picture
 import Control.Applicative hiding (empty)
 import Control.Lens
 import Data.Attoparsec.Text qualified as P
@@ -116,3 +117,21 @@ solve1 x = minCost (g x) (c x) 0 (length (concat x) - 1)
 part1 = solve1 input'
 
 part2 = solve1 (expandGraph input')
+
+paths :: AdjacencyIntMap -> Table -> Int -> Int -> [Int]
+paths g c s e = go e
+  where
+    m = (M.fromList . adjacencyList . transpose) (minGraph g c s)
+    go x = if x == s then [s] else x : (go (m ^?! ix x . ix 0))
+
+foo x = paths (g x) (c x) 0 (length (concat x) - 1)
+
+-- imageCreator :: String -> IO ()
+imageCreator p = writePng p $ generateImage pixelRenderer 500 500
+  where
+    path = foo (expandGraph input')
+    pixelRenderer x y
+      | y * 500 + x `elem` path = p1
+      | otherwise = p2
+    p1 = PixelRGB8 255 0 0
+    p2 = PixelRGB8 0 255 0

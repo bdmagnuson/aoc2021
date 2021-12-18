@@ -53,6 +53,11 @@ library
                        , TypeFamilies
                        , ImportQualifiedPost
                        , LambdaCase
+                       , BangPatterns
+                       , FlexibleContexts
+                       , RankNTypes
+                       , DeriveDataTypeable
+                       , DeriveFunctor
 
   build-depends:         base >= 4.13
                        , attoparsec
@@ -66,8 +71,9 @@ library
                        , memoize
                        , transformers
                        , heap
+                       , JuicyPixels
 
-  default-language:    GHC2021
+  default-language:    Haskell2010
 
 executable Aoc2021
   default-language: Haskell2010

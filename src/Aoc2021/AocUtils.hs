@@ -2,6 +2,7 @@ module Aoc2021.AocUtils
   ( getInput,
     getInput',
     revsort,
+    combinations,
   )
 where
 
@@ -25,3 +26,8 @@ getInput' f p =
 
 revsort :: Ord a => [a] -> [a]
 revsort = sortBy (comparing Down)
+
+combinations :: Int -> [a] -> [[a]]
+combinations 0 _ = [[]]
+combinations _ [] = []
+combinations n (x : xs) = (map (x :) (combinations (n - 1) xs)) ++ (combinations n xs)

@@ -24,18 +24,11 @@ peak (dx, dy) ((min_x, max_x), (min_y, max_y)) = if any pHit l then Just (maximu
     l = takeWhile (not . pBeyond) (pos (0, 0) (dx, dy))
     pHit (x, y) = (x >= min_x) && (x <= max_x) && (y >= min_y) && (y <= max_y)
     pBeyond (x, y) = x > max_x || y < min_y
-    pBefore (x, y) = x < min_x || y > max_y
 
-solve1 :: Target -> Int
-solve1 r = maximum (catMaybes (map (flip peak $ r) start))
-  where
-    start = [(dx, dy) | dx <- [1 .. 184], dy <- [0 .. 1000]]
-
--- No force like brute force
 solve :: Target -> [Int]
 solve r@((_, max_x), (min_y, _)) = catMaybes (map (flip peak $ r) start)
   where
-    start = [(dx, dy) | dx <- [1 .. max_x], dy <- [min_y .. 200]]
+    start = [(dx, dy) | dx <- [1 .. max_x], dy <- [min_y .. (-min_y)]]
 
 input = ((138, 184), (-125, -71))
 
