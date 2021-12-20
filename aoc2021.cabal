@@ -33,6 +33,7 @@ library
                    Aoc2021.Day16,
                    Aoc2021.Day17,
                    Aoc2021.Day18,
+                   Aoc2021.Day18_alt,
                    Aoc2021.Day19,
                    Aoc2021.Day20,
                    Aoc2021.Day21,

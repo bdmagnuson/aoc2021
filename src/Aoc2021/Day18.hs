@@ -8,13 +8,11 @@ import Aoc2021.AocUtils
 import Control.Applicative
 import Control.Lens
 import Data.Attoparsec.Text qualified as P
-import Data.Either (fromRight)
-import Debug.Trace
 
 data Node a b
   = Value b
   | Pair a (Node a b) (Node a b)
-  deriving (Functor)
+  deriving (Functor, Eq)
 
 instance (Show b) => Show (Node a b) where
   show (Value b) = show b
@@ -35,7 +33,6 @@ parser = many (pPair <* P.endOfLine)
 
 input = getInput "input/day18.txt" parser
 
--- annotate :: Node a b -> Node (Int, Int) b
 annotate (Value v) = Value v
 annotate (Pair _ (Value l) (Value r)) = Pair (1, 1) (Value l) (Value r)
 annotate (Pair _ (Value v) p) = let p'@(Pair (l, r) _ _) = annotate p in Pair (1, l + r) (Value v) p'
@@ -49,33 +46,12 @@ unannotate :: Node a b -> Node () b
 unannotate (Value b) = Value b
 unannotate (Pair _ l r) = Pair () (unannotate l) (unannotate r)
 
-findExplode = go 0 0
-  where
-    go :: Integer -> Integer -> Ann -> Maybe (Integer, Integer, Integer)
-    go _ _ (Value _) = Nothing
-    go 4 i (Pair _ (Value l) (Value r)) = Just (i, l, r)
-    go d i (Pair (l, r) n1 n2) =
-      case (go (d + 1) i n1, go (d + 1) (i + l) n2) of
-        (Just n, _) -> Just n
-        (Nothing, Just n) -> Just n
-        (Nothing, Nothing) -> Nothing
-
-findSplit = go 0
-  where
-    go :: Integer -> Ann -> Maybe Integer
-    go i (Value n) = if n > 9 then Just i else Nothing
-    go i (Pair (l, r) n1 n2) =
-      case (go i n1, go (i + l) n2) of
-        (Just n, _) -> Just n
-        (Nothing, Just n) -> Just n
-        (Nothing, Nothing) -> Nothing
-
 magnitude :: Node a Integer -> Integer
 magnitude (Value a) = a
 magnitude (Pair _ a b) = 3 * magnitude a + 2 * magnitude b
 
-add :: Node () b -> Node () b -> Node () b
-add a b = Pair () a b
+add :: Node () Integer -> Node () Integer -> Node () Integer
+add a b = reduce $ Pair () a b
 
 reduce :: Node () Integer -> Node () Integer
 reduce x =
@@ -83,8 +59,8 @@ reduce x =
     Nothing ->
       case findSplit ann of
         Nothing -> x
-        Just i -> reduce (unannotate $ splitNode i ann)
-    Just (i, l, r) -> reduce (unannotate . zeroNode i . addIndex (i - 1) l . addIndex (i + 2) r $ ann)
+        Just i -> reduce . unannotate . splitNode i $ ann
+    Just (i, l, r) -> reduce . unannotate . zeroNode i . addIndex (i - 1) l . addIndex (i + 2) r $ ann
   where
     ann = annotate x
     addIndex :: Integer -> Integer -> Ann -> Ann
@@ -101,18 +77,35 @@ reduce x =
       | i < l = Pair (l, r) (splitNode i n1) n2
       | otherwise = Pair (l, r) n1 (splitNode (i - l) n2)
 
-zeroNode = go 0
-  where
-    go :: Integer -> Integer -> Ann -> Ann
-    go 4 _ _ = Value 0
-    go d i (Pair (l, r) n1 n2)
-      | i < l = Pair (l, r) (go (d + 1) i n1) n2
-      | otherwise = Pair (l, r) n1 (go (d + 1) (i - l) n2)
+    zeroNode = go 0
+      where
+        go :: Integer -> Integer -> Ann -> Ann
+        go 4 _ _ = Value 0
+        go d i (Pair (l, r) n1 n2)
+          | i < l = Pair (l, r) (go (d + 1) i n1) n2
+          | otherwise = Pair (l, r) n1 (go (d + 1) (i - l) n2)
 
-solve x = magnitude $ foldl1 (\x y -> reduce (add x y)) x
+    findExplode = go 0 0
+      where
+        go :: Integer -> Integer -> Ann -> Maybe (Integer, Integer, Integer)
+        go _ _ (Value _) = Nothing
+        go 4 i (Pair _ (Value l) (Value r)) = Just (i, l, r)
+        go d i (Pair (l, r) n1 n2) =
+          case (go (d + 1) i n1, go (d + 1) (i + l) n2) of
+            (Just n, _) -> Just n
+            (Nothing, Just n) -> Just n
+            (Nothing, Nothing) -> Nothing
 
-part1 = solve input
+    findSplit = go 0
+      where
+        go :: Integer -> Ann -> Maybe Integer
+        go i (Value n) = if n > 9 then Just i else Nothing
+        go i (Pair (l, r) n1 n2) =
+          case (go i n1, go (i + l) n2) of
+            (Just n, _) -> Just n
+            (Nothing, Just n) -> Just n
+            (Nothing, Nothing) -> Nothing
 
-part2 = maximum $ concatMap f (combinations 2 input)
-  where
-    f [x, y] = [magnitude $ reduce (add x y), magnitude $ reduce (add y x)]
+part1 = magnitude . foldl1 add $ input
+
+part2 = maximum $ [magnitude $ add x y | x <- input, y <- input, x /= y]
