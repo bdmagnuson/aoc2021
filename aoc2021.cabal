@@ -59,6 +59,7 @@ library
                        , RankNTypes
                        , DeriveDataTypeable
                        , DeriveFunctor
+                       , InstanceSigs
 
   build-depends:         base >= 4.13
                        , attoparsec

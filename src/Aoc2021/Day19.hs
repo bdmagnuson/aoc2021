@@ -60,7 +60,6 @@ locate :: [Coords] -> [(Coords, (Int, Int, Int))]
 locate [] = []
 locate (x : xs) = go [(x, (0, 0, 0))] xs
   where
-    -- go :: [Coords] -> [Coords] -> [Coords]
     go xs [] = xs
     go xs ys = go (g' : xs) (ys \\ [g])
       where
@@ -83,10 +82,6 @@ locate1 r a = asum $ do
   let r'' = map (\(x, y, z) -> (x + dx, y + dy, z + dz)) r'
   let l = lengthOf (folded . filtered (\x -> x `elem` a)) r''
   return (if l >= 12 then Just (r'', (dx, dy, dz)) else Nothing)
-
-s0 = [(0, 2, 0), (4, 1, 0), (3, 3, 0)] :: Coords
-
-s1 = [(-1, -1, 0), (-5, 0, 0), (-2, 1, 0)] :: Coords
 
 solve = locate input
 
