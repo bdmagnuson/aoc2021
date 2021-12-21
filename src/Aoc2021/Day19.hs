@@ -10,11 +10,12 @@ import Control.Lens
 import Control.Monad
 import Data.Attoparsec.Text qualified as P
 import Data.Foldable (asum)
-import Data.List (sort, (\\))
+import Data.List (permutations, (\\))
 import Data.Set qualified as S
 import Debug.Trace
+import Linear
 
-type Coords = [(Int, Int, Int)]
+type Coords = [V3 Int]
 
 input :: [Coords]
 input = getInput "input/day19.txt" parser
@@ -32,33 +33,21 @@ parser = pScanner `P.sepBy` P.endOfLine
       P.string " ---"
       P.endOfLine
       c <- many ((decimal `P.sepBy1` P.char ',') <* P.endOfLine)
-      return $ map (\(a : b : c : []) -> (a, b, c)) c
+      return $ map (\(a : b : c : []) -> V3 a b c) c
 
-rotations :: [(Int, Int, Int) -> (Int, Int, Int)]
-rotations =
-  concat
-    [ map (. id) g,
-      map (. r90x) g,
-      map (. r180x) g,
-      map (. r270x) g,
-      map (. r90y) g,
-      map (. r270y) g
-    ]
-  where
-    r90x (x, y, z) = (x, z, -y)
-    r90y (x, y, z) = (z, y, -x)
-    r90z (x, y, z) = (y, -x, z)
-    r180x = r90x . r90x
-    r180y = r90y . r90y
-    r180z = r90z . r90z
-    r270x = r90x . r90x . r90x
-    r270y = r90y . r90y . r90y
-    r270z = r90z . r90z . r90z
-    g = [id, r90z, r180z, r270z]
+rotations :: [M33 Int]
+rotations = do
+  [x, y, z] <- permutations [V3 1 0 0, V3 0 1 0, V3 0 0 1]
+  sx <- [1, -1]
+  sy <- [1, -1]
+  sz <- [1, -1]
+  let m = V3 (x * sx) (y * sy) (z * sz)
+  guard (det33 m == 1)
+  return m
 
-locate :: [Coords] -> [(Coords, (Int, Int, Int))]
+locate :: [Coords] -> [(Coords, V3 Int)]
 locate [] = []
-locate (x : xs) = go [(x, (0, 0, 0))] xs
+locate (x : xs) = go [(x, V3 0 0 0)] xs
   where
     go xs [] = xs
     go xs ys = go (g' : xs) (ys \\ [g])
@@ -69,19 +58,19 @@ locate (x : xs) = go [(x, (0, 0, 0))] xs
           Just a -> (y, a)
           Nothing -> foo ys
 
-locateN :: Coords -> [Coords] -> Maybe (Coords, (Int, Int, Int))
+locateN :: Coords -> [Coords] -> Maybe (Coords, V3 Int)
 locateN r as = asum (map (locate1 r) as)
 
-locate1 :: Coords -> Coords -> Maybe (Coords, (Int, Int, Int))
-locate1 r a = asum $ do
-  (ax, ay, az) <- a
+locate1 :: Coords -> Coords -> Maybe (Coords, V3 Int)
+locate1 rs as = asum $ do
+  a <- as
   rot <- rotations
-  let r' = map rot r
-  (rx, ry, rz) <- r'
-  let (dx, dy, dz) = (ax - rx, ay - ry, az - rz)
-  let r'' = map (\(x, y, z) -> (x + dx, y + dy, z + dz)) r'
-  let l = lengthOf (folded . filtered (\x -> x `elem` a)) r''
-  return (if l >= 12 then Just (r'', (dx, dy, dz)) else Nothing)
+  let rs' = map (*! rot) rs
+  r' <- rs'
+  let d = a - r'
+  let r'' = map (+ d) rs'
+  let l = lengthOf (folded . filtered (\x -> x `elem` as)) r''
+  return (if l >= 12 then Just (r'', d) else Nothing)
 
 solve = locate input
 
@@ -89,4 +78,4 @@ part1 = S.size $ foldl (\x y -> S.union x (S.fromList y)) S.empty (map fst solve
 
 part2 = let a = map snd solve in maximum [norm x y | x <- a, y <- a, x /= y]
   where
-    norm (a1, a2, a3) (b1, b2, b3) = abs (a1 - b1) + abs (a2 - b2) + abs (a3 - b3)
+    norm (V3 a1 a2 a3) (V3 b1 b2 b3) = abs (a1 - b1) + abs (a2 - b2) + abs (a3 - b3)

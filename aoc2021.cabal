@@ -35,6 +35,7 @@ library
                    Aoc2021.Day18,
                    Aoc2021.Day18_alt,
                    Aoc2021.Day19,
+                   Aoc2021.Day19_alt,
                    Aoc2021.Day20,
                    Aoc2021.Day21,
                    Aoc2021.Day22,
@@ -74,6 +75,7 @@ library
                        , transformers
                        , heap
                        , JuicyPixels
+                       , linear
 
   default-language:    Haskell2010
 
