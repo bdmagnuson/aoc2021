@@ -79,14 +79,16 @@ solve2 = memoize f
     f (Game t l1 l2 s1 s2 [])
       | start && (s1 >= 21) = [1, 0]
       | start && (s2 >= 21) = [0, 1]
-      | t == Player1_R1 = foldl1' (zipWith (+)) [solve2 (Game Player1_R2 (move l1 r) l2 s1 s2 []) | r <- [1 .. 3]]
-      | t == Player1_R2 = foldl1' (zipWith (+)) [solve2 (Game Player1_R3 (move l1 r) l2 s1 s2 []) | r <- [1 .. 3]]
-      | t == Player1_R3 = foldl1' (zipWith (+)) [solve2 (Game Player2_R1 (move l1 r) l2 (s1 + (move l1 r)) s2 []) | r <- [1 .. 3]]
-      | t == Player2_R1 = foldl1' (zipWith (+)) [solve2 (Game Player2_R2 l1 (move l2 r) s1 s2 []) | r <- [1 .. 3]]
-      | t == Player2_R2 = foldl1' (zipWith (+)) [solve2 (Game Player2_R3 l1 (move l2 r) s1 s2 []) | r <- [1 .. 3]]
-      | t == Player2_R3 = foldl1' (zipWith (+)) [solve2 (Game Player1_R1 l1 (move l2 r) s1 (s2 + (move l2 r)) []) | r <- [1 .. 3]]
+      | otherwise = foldl1' (zipWith (+)) v
       where
         start = (t == Player1_R1 || t == Player2_R1)
+        v = case t of
+          Player1_R1 -> [solve2 (Game Player1_R2 (move l1 r) l2 s1 s2 []) | r <- [1 .. 3]]
+          Player1_R2 -> [solve2 (Game Player1_R3 (move l1 r) l2 s1 s2 []) | r <- [1 .. 3]]
+          Player1_R3 -> [solve2 (Game Player2_R1 (move l1 r) l2 (s1 + (move l1 r)) s2 []) | r <- [1 .. 3]]
+          Player2_R1 -> [solve2 (Game Player2_R2 l1 (move l2 r) s1 s2 []) | r <- [1 .. 3]]
+          Player2_R2 -> [solve2 (Game Player2_R3 l1 (move l2 r) s1 s2 []) | r <- [1 .. 3]]
+          Player2_R3 -> [solve2 (Game Player1_R1 l1 (move l2 r) s1 (s2 + (move l2 r)) []) | r <- [1 .. 3]]
     move a b = (a - 1 + b) `mod` 10 + 1
 
 part2 = maximum $ solve2 (Game Player1_R1 4 10 0 0 [])

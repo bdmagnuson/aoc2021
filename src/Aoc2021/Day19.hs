@@ -18,7 +18,7 @@ import Linear
 type Coords = [V3 Int]
 
 input :: [Coords]
-input = getInput "input/day19.txt" parser
+input = getInput "input/day19_test.txt" parser
 
 decimal :: P.Parser Int
 decimal = P.signed P.decimal
