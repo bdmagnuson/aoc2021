@@ -76,6 +76,8 @@ library
                        , heap
                        , JuicyPixels
                        , linear
+                       , random
+                       , split
 
   default-language:    Haskell2010
 
